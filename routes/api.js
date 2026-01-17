@@ -9,6 +9,7 @@ const orderController = require('../controllers/orderController');
 
 const authMiddleware = require('../middleware/authMiddleware');
 
+
 // --- AUTH ---
 router.post('/login', authController.login);
 router.post('/register', authController.register);
@@ -21,11 +22,14 @@ router.put('/concerts/:id', concertController.update);
 router.delete('/concerts/:id', concertController.delete);
 
 // --- TICKETS (TRANSAKSI) ---
+// 👇 PERBAIKAN: Tambahkan awalan '/tickets/' agar sesuai dengan Android
+router.get('/tickets/stats', authMiddleware.verifyToken, ticketController.getDashboardStats); 
+
 router.post('/tickets/buy', authMiddleware.verifyToken, ticketController.buyTicket);
 router.get('/tickets/my-ticket', authMiddleware.verifyToken, ticketController.getMyTickets);
 router.post('/tickets/validate', ticketController.validateTicket); // CREW
 
 // --- ORDERS (HISTORY) ---
-router.get('/orders', authMiddleware.verifyToken,orderController.getHistory);
+router.get('/orders', authMiddleware.verifyToken, orderController.getHistory);
 
 module.exports = router;

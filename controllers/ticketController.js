@@ -144,3 +144,37 @@ exports.validateTicket = (req, res) => {
         });
     });
 };
+
+
+//------------------------
+// ... kode-kode sebelumnya (buyTicket, validateTicket, dll) ...
+
+// --- 4. FUNGSI STATISTIK DASHBOARD ---
+exports.getDashboardStats = (req, res) => {
+    // Query untuk menghitung total tiket dan tiket yang sudah dipakai (USED)
+    // Kita hitung global (semua konser) agar dashboard terlihat ramai
+    const sql = `
+        SELECT 
+            COUNT(*) as total_sold,
+            SUM(CASE WHEN status = 'USED' THEN 1 ELSE 0 END) as total_scanned
+        FROM tickets
+    `;
+
+    db.query(sql, (err, results) => {
+        if (err) {
+            return res.status(500).json({ status: 'error', message: err.message });
+        }
+
+        const stats = results[0];
+
+        console.log("HASIL SQL STATS:", stats);
+        res.json({
+            status: 'success',
+            message: 'Data Statistik Dashboard',
+            data: {
+                totalSold: stats.total_sold || 0,
+                totalScanned: stats.total_scanned || 0
+            }
+        });
+    });
+};
